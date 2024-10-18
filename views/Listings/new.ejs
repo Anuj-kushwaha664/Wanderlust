@@ -1,0 +1,43 @@
+<% layout("./layouts/boilerplate") %>
+
+<body>
+    <br><br>
+    <div class="row">
+        <div class="col-8 offset-2">   
+            <!-- col-8 means accquire place for 8 colm if entire screen takes 12 colm -->
+             <!-- offset for leave col from begning -->
+    <form method="post" action="/listings">
+        <div class="mb-3">
+            <!-- mb-3 stand for margin-bottom : 3  -->
+            <label for="title" class="form-label">Title</label>
+            <input name="title" class="form-control" type="text" placeholder="Add a catchy title">
+        </div>
+        <div class="mb-3">
+            <label for="Description" class="form-label">Description</label>
+            <textarea name="description" class="form-control" type="text" placeholder="enter description"></textarea>
+        </div>
+        <div class="row">
+            <div class="mb-3 col-md-4">
+                <label for="price" class="form-label">Price</label>
+                <input name="price" class="form-control" type="number" placeholder="1200">
+            </div>
+            <div class="mb-3 col-md-8">
+                <label for="country" class="form-label">Country</label>
+                <input name="country" class="form-control" type="text" placeholder="India">
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="image" class="form-label">Image link</label>
+            <input name="image" class="form-control" type="text" placeholder="enter image url/link">
+        </div>
+        <div class="mb-3">
+            <label for="location" class="form-label">Location</label>
+            <input name="location" class="form-control" type="text" placeholder="Jaipur, Rajashthan">
+        </div>
+       
+        <button class="btn btn-dark add-btn">submit</button>
+    </form>
+    </div>
+    </div>
+    <br>
+</body>
