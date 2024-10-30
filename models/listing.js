@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
+const { listingSchema } = require("../schema");
 const Schema = mongoose.Schema;
+const Review  = require("./review");
 
 const ListingSchema = new Schema({
     title : {
@@ -8,14 +10,30 @@ const ListingSchema = new Schema({
     },
     description : String,
     image :  {
-        type : String,
-        default : "https://www.google.com/url?sa=i&url=https%3A%2F%2Funsplash.com%2Fs%2Fphotos%2Fhouse&psig=AOvVaw0sPtWK_IClmhETVvc2i0sm&ust=1728903995634000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCJjfj4ybi4kDFQAAAAAdAAAAABAE",
-        set : (v)=> v===""?"https://www.google.com/url?sa=i&url=https%3A%2F%2Funsplash.com%2Fs%2Fphotos%2Fhouse&psig=AOvVaw0sPtWK_IClmhETVvc2i0sm&ust=1728903995634000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCJjfj4ybi4kDFQAAAAAdAAAAABAE" : v,
+        url : String,
+        filename : String,
     },
     price : Number,
     location : String,
     country : String,
+    reviews : [
+        {
+            type : Schema.Types.ObjectId,
+            ref : 'Review'
+        }
+    ],
+    owner : {
+        type : Schema.Types.ObjectId,
+        ref : "User"
+    }
 })
+
+// This is mongoose middleware : Read -> asyn post hook
+ListingSchema.post("findOneAndDelete",  async(listing)=>{
+    if(listing){
+        await Review.deleteMany({_id : {$in : listing.reviews}});
+    }
+});
 
 const Listing = mongoose.model("Listing", ListingSchema);
 

@@ -6,7 +6,7 @@
         <div class="col-8 offset-2">   
             <!-- col-8 means accquire place for 8 colm if entire screen takes 12 colm -->
              <!-- offset for leave col from begning -->
-    <form class="needs-validation" novalidate method="post" action="/listings">
+    <form class="needs-validation" novalidate method="post" action="/listings" enctype="multipart/form-data">
         <div class="mb-3">
             <!-- mb-3 stand for margin-bottom : 3  -->
             <label for="title" class="form-label">Title</label>
@@ -50,7 +50,7 @@
         </div>
         <div class="mb-3">
             <label for="image" class="form-label">Image link</label>
-            <input name="image" class="form-control" type="text" placeholder="enter image url/link">
+            <input name="image" class="form-control" type="file" >
         </div>
         <div class="mb-3">
             <label for="location" class="form-label">Location</label>

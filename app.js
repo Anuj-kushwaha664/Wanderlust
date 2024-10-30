@@ -1,14 +1,20 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-const Listing = require("./models/listing");
 const path = require("path");
 const methodOverride = require("method-override");
-const { redirect } = require("express/lib/response");
+const { redirect, cookie } = require("express/lib/response");
 const ejsMate = require("ejs-mate");
-const wrapAsync = require("./util/wrapAsync.js");
 const ExpressError = require("./util/ExpressError.js");
-const {listingSchema} = require("./schema.js");
+const passport = require("passport");
+const localStrategy = require("passport-local");
+const User = require("./models/user.js");
+const expressSession = require("express-session");
+const flash = require('connect-flash');
+
+const listingRouter = require("./routes/listing.js");
+const reviewRouter = require("./routes/review.js");
+const userRouter = require("./routes/user.js");
 
 // connection with database
 main().then(()=>{
@@ -21,73 +27,45 @@ async function main(){
     await mongoose.connect("mongodb://127.0.0.1:27017/wanderlust")
 }
 
+const sessionObject = {
+    secret : "mysupersecretstring",
+    resave : false,
+    saveUninitialized : true,
+    cookie:{
+        expires : Date.now() + 7*24*60*60*1000, // date.now give time in second of now
+        maxAge: 7*24*60*60*1000,
+        httpOnly : true
+    }
+}
+
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({extended:true}))  // to enable url parsing
 app.use(methodOverride("_method"));
 app.engine("ejs",  ejsMate);
 app.use(express.static(path.join(__dirname, "/public")));
+app.use(expressSession(sessionObject));
+app.use(flash());
 
-// server listening at route "/"
-app.get("/", (req,res)=>{
-    res.send("hi, I am root");
+
+// passport set-up
+app.use(passport.initialize());
+app.use(passport.session());        
+passport.use(new localStrategy(User.authenticate()));
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+app.use((req,res,next)=>{
+    res.locals.success = req.flash("success");
+    res.locals.error = req.flash("error");
+    res.locals.currUser = req.user;
+    next();
 });
 
-const validateListing = (req,res,next)=>{
-    let {error} = listingSchema.validate(req.body);
-    if(error){
-        throw new ExpressError(400, error)
-    }else{
-        next();
-    }
-}
-
-app.get("/listings",wrapAsync(async(req,res)=>{
-    const allListings = await Listing.find({});
-    res.render("./Listings/index.ejs", {allListings});
-}));
-
-app.get("/listings/new", (req,res)=>{
-    res.render("./Listings/new.ejs");
-})
-
-// create route
-app.post("/listings", validateListing, wrapAsync(async(req,res,next)=>{  // handling error using wrapAsync function because try catch is bulky
-        const newlisting = new Listing(req.body);
-        await newlisting.save();
-        res.redirect("/listings")
-})) 
-
-// show route
-app.get("/listings/:id", wrapAsync(async(req,res)=>{
-    let {id} = req.params;
-    const listing = await Listing.findById(id);
-    // console.log(listing);
-    res.render("./Listings/show.ejs", {listing});
-}));
-
-//edit route
-app.get("/listings/:id/edit", wrapAsync(async(req,res)=>{
-    const {id} = req.params;
-    const listing = await Listing.findById(id);
-    res.render("./Listings/edit.ejs", {listing});
-}));
-
-app.put("/listings/:id",wrapAsync(async(req,res)=>{
-    if(Object.keys(req.body).length==0){
-        throw new ExpressError(404, "Send Valid data for listing")
-    }
-    const {id} = req.params;
-    // console.log(id);
-   await Listing.findByIdAndUpdate(id, req.body);
-   res.redirect("/listings");
-}));
-
-app.delete("/listings/:id", wrapAsync(async(req,res)=>{
-    const {id} = req.params;
-    await Listing.findByIdAndDelete(id);
-    res.redirect("/listings");
-}));
+app.use("/listings",  listingRouter);
+app.use("/listings/:id",  reviewRouter);
+app.use("/users",  userRouter);
 
 app.all("*", (req,res,next)=>{  // if route not match from above routes then send this response
     next(new ExpressError(404, "Page Not Found"));

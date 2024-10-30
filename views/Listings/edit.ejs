@@ -18,7 +18,7 @@
         </div>
         <div class="mb-3">
             <label for="description" class="form-label">Description</label>
-            <textarea name="description" class="form-control" type="text"  value="<%= listing.description %>" placeholder="enter description"></textarea>
+            <textarea name="description" class="form-control" type="text" placeholder="enter description"><%= listing.description %></textarea>
             <div class="valid-feedback">
                 looks good!
             </div>
@@ -45,9 +45,13 @@
                 </div>
             </div>
         </div>
+        <div class="mb-3" >
+            <p>Current Image preview</p>
+            <img style="height: 150px; width: 200px;" src="<%= originalImageUrl %>" alt="">
+        </div>
         <div class="mb-3">
             <label for="image" class="form-label">Image</label>
-            <input name="image" class="form-control" type="text" value="<%= listing.image %>" placeholder="enter image url/link">
+            <input name="image" class="form-control" type="file" placeholder="enter image url/link">
         </div>
         <div class="mb-3">
             <label for="location" class="form-label">Location</label>
