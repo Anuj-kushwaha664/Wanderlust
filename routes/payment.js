@@ -68,8 +68,8 @@ router.post('/create-checkout-session', async (req, res) => {
           },
         ],
         mode: 'payment', // Can also be 'subscription' or 'setup'
-        success_url: 'http://localhost:8080/payments/success', // Redirect URL after payment success
-        cancel_url: 'http://localhost:8080/payments/cancel', // Redirect URL after payment cancellation
+        success_url: 'https://wanderlust-bb60.onrender.com/payments/success', // Redirect URL after payment success
+        cancel_url: 'https://wanderlust-bb60.onrender.com/payments/cancel', // Redirect URL after payment cancellation
         metadata: {
             userEmail: req.user.email, // Add user email to metadata
             userName: req.user.username
