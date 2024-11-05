@@ -14,7 +14,9 @@
                 <p> <b>Price : </b> &#8377; <%= listing.price.toLocaleString("en-In") %> </p>
                 <p> <b>Location : </b> <%= listing.location %></p>
                 <p><b>Country : </b><%= listing.country %> </p>
-                
+                <% if( currUser ){ %>
+                <button class="btn btn-dark" id="checkout-button">Book Now</button>
+                <% } %>
             </div>
         </div>
 <!-- <%= currUser %> -->
@@ -73,4 +75,26 @@
 
     </div>
     <br>
+
+    <script>
+        const price =  <%= listing.price %>;
+        const name = "<%= listing.title %>";
+        console.log( price);
+        document.getElementById('checkout-button').addEventListener('click', async () => {
+          const response = await fetch('/payments/create-checkout-session', { 
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+            amount: price,
+            name: name
+            })
+           });
+          const session = await response.json();
+    
+          const stripe = Stripe('pk_test_51QGhmKG24y1ZcPRsiOKpl0y4srCTJWExWijFbV8aIbSe82tLtL9FZc3WQ4iUOLaqnw9yK01t6sOZtpl4Ut5FY7p600eVt3mZ5f'); // Replace with your publishable key
+          stripe.redirectToCheckout({ sessionId: session.id });
+        });
+      </script>
 </body>

@@ -11,10 +11,17 @@ const localStrategy = require("passport-local");
 const User = require("./models/user.js");
 const expressSession = require("express-session");
 const flash = require('connect-flash');
+const Listing = require("./models/listing");
+require('dotenv').config();
+const {isLoggedIn} = require("./middleware.js");
+
 
 const listingRouter = require("./routes/listing.js");
 const reviewRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
+const paymentRouter = require("./routes/payment.js");
+
+const atlas_url=process.env.ATLASDB_URL;
 
 // connection with database
 main().then(()=>{
@@ -23,8 +30,9 @@ main().then(()=>{
     console.log(err);
 })
 
+
 async function main(){
-    await mongoose.connect("mongodb://127.0.0.1:27017/wanderlust")
+    await mongoose.connect("mongodb://127.0.0.1:27017/wanderlust");
 }
 
 const sessionObject = {
@@ -48,6 +56,7 @@ app.use(expressSession(sessionObject));
 app.use(flash());
 
 
+
 // passport set-up
 app.use(passport.initialize());
 app.use(passport.session());        
@@ -63,10 +72,31 @@ app.use((req,res,next)=>{
     next();
 });
 
+app.use("/payments",  paymentRouter);
+
+app.get("/",  async(req,res)=>{
+    const allListings = await Listing.find({});
+    console.log(req.user);
+    res.render("./Listings/index.ejs", {allListings});
+})
+
+app.use(express.json());
+
+
 app.use("/listings",  listingRouter);
 app.use("/listings/:id",  reviewRouter);
 app.use("/users",  userRouter);
 
+app.get('/success', (req, res) => {
+    req.flash("success", "Payment is succesfull !");
+    res.redirect("/listings");
+  });
+  
+  app.get('/cancel', (req, res) => {
+    req.flash("error", "Payment is Failed !");
+    res.redirect("/listings");
+  });
+  
 app.all("*", (req,res,next)=>{  // if route not match from above routes then send this response
     next(new ExpressError(404, "Page Not Found"));
 })

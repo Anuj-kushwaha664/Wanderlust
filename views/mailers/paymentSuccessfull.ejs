@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Payment Successful</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            background-color: #4caf50;
+            padding: 10px;
+            border-radius: 8px 8px 0 0;
+            color: white;
+        }
+        .content {
+            padding: 20px;
+        }
+        .content h2 {
+            color: #333;
+        }
+        .details {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Payment Successful!</h1>
+        </div>
+        <div class="content">
+            <h2>Hello, <%= name %></h2>
+            <p>We are pleased to inform you that your payment has been successfully processed.</p>
+            <div class="details">
+                <h3>Payment Details:</h3>
+                <p><strong>Amount:</strong> <%= detail.amount_total/100 %></p>
+                <p><strong>Payment Date:</strong> <%= date %></p>
+                <p><strong>Transaction ID:</strong> <%= detail.payment_intent %></p>
+                <p><strong>Product/Service:</strong> <%= productName %></p>
+                <p><strong>Quantity:</strong> <%= quantity %></p>
+            </div>
+            <p>Thank you for your payment. If you have any questions, please contact our support team.</p>
+        </div>
+        <div class="footer">
+            <p>&copy; 2024 wanderlust</p>
+            <p>Contact us at support@wanderlust.com</p>
+        </div>
+    </div>
+</body>
+</html>
