@@ -68,8 +68,8 @@ router.post('/create-checkout-session', async (req, res) => {
           },
         ],
         mode: 'payment', // Can also be 'subscription' or 'setup'
-        success_url: 'https://a48b-2402-8100-3862-b142-5518-3a90-60b6-a559.ngrok-free.app/listings', // Redirect URL after payment success
-        cancel_url: 'https://a48b-2402-8100-3862-b142-5518-3a90-60b6-a559.ngrok-free.app/listings', // Redirect URL after payment cancellation
+        success_url: 'http://localhost:8080/payments/success', // Redirect URL after payment success
+        cancel_url: 'http://localhost:8080/payments/cancel', // Redirect URL after payment cancellation
         metadata: {
             userEmail: req.user.email, // Add user email to metadata
             userName: req.user.username
@@ -82,6 +82,16 @@ router.post('/create-checkout-session', async (req, res) => {
       console.error('Error creating checkout session:', error);
       res.status(500).send({ error: error.message });
     }
+  });
+
+  router.get('/success', (req, res) => {
+    req.flash("success", "Payment is succesfull !");
+    res.redirect("/listings");
+  });
+  
+  router.get('/cancel', (req, res) => {
+    req.flash("error", "Payment is Failed !");
+    res.redirect("/listings");
   });
 
 module.exports = router;
