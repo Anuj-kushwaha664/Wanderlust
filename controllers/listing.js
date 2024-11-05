@@ -50,7 +50,22 @@ module.exports.editController = async(req,res)=>{
     }
     const {id} = req.params;
    
-    await Listing.findByIdAndUpdate(id, req.body);
+    if(req.file){
+        
+        let url = req.file.path;
+        let filename = req.file.filename;
+    
+        await Listing.findByIdAndUpdate(id, {
+            ...req.body, 
+            image:{
+                url,
+                filename
+            }
+        });
+    }else{
+        await Listing.findByIdAndUpdate(id, req.body);
+    }
+
     req.flash("success", "Listing updated successfully");
     console.log("nice");
    res.redirect(`/listings/${id}`);

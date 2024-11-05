@@ -28,7 +28,7 @@ router.get("/:id", wrapAsync(showContoller));
 //edit route
 router.get("/:id/edit",isLoggedIn,isOwner, wrapAsync(editFormController));
 
-router.put("/:id", isLoggedIn,isOwner, wrapAsync(editController));
+router.put("/:id", isLoggedIn,isOwner, upload.single("image"), wrapAsync(editController));
 
 // Delete route
 router.delete("/:id",isLoggedIn,isOwner, wrapAsync(deleteController));

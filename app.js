@@ -14,7 +14,6 @@ const MongoStore = require("connect-mongo");
 const flash = require('connect-flash');
 const Listing = require("./models/listing");
 require('dotenv').config();
-const {isLoggedIn} = require("./middleware.js");
 
 
 const listingRouter = require("./routes/listing.js");
