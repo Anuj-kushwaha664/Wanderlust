@@ -14,12 +14,14 @@ const MongoStore = require("connect-mongo");
 const flash = require('connect-flash');
 const Listing = require("./models/listing");
 require('dotenv').config();
+const GoogleStrategy = require("./config/googleStrategy.js")
 
 
 const listingRouter = require("./routes/listing.js");
 const reviewRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
 const paymentRouter = require("./routes/payment.js");
+const authRouter = require("./routes/auth.js");
 
 const atlas_url=process.env.ATLASDB_URL;
 
@@ -75,6 +77,7 @@ app.use(passport.initialize());
 app.use(passport.session());        
 passport.use(new localStrategy(User.authenticate()));
 
+
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
@@ -93,9 +96,10 @@ app.get("/",  async(req,res)=>{
     res.render("./Listings/index.ejs", {allListings});
 })
 
+
 app.use(express.json());
 
-
+app.use("/auth", authRouter);
 app.use("/listings",  listingRouter);
 app.use("/listings/:id",  reviewRouter);
 app.use("/users",  userRouter);
